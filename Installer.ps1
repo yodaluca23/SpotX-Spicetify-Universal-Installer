@@ -1,3 +1,4 @@
+# This script is available at https://github.com/yodaluca23/SpotX-Spicetify-Universal-Installer
 # To run on MacOS Install PowerShell 7 with "brew install PowerShell". To run on Win install PowerShell 7 with "winget install --id Microsoft.Powershell --source winget".
 # To run Open PowerShell 7 and run "iex "& { $(iwr -useb 'https://raw.githubusercontent.com/yodaluca23/SpotX-Spicetify-Universal-Installer/main/Installer.ps1') }""
 # Parameters include "-clean" which will perform a clean install of Spotify, first uninstalling and then running the main patching scripts.

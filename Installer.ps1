@@ -120,7 +120,7 @@ if ($IsMacOS -eq $false -and $IsLinux -eq $false -and $IsWindows -eq $false) {
     [bool] $IsLinux = $true
     }
     if ($os -eq 'o' -or 'O') {
-    UnsupportedOS
+        UnsupportedOS
     }
     Write-Output "Tip: Install PowerShell 7 or newer to skip this prompt next time."
 }

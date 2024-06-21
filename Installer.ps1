@@ -99,7 +99,7 @@ function Cleanup {
 
 function UnsupportedOS {
     Write-Output "Your running an Unsupported OS. The currently supported Operating systems for this script include Windows, MacOS, and Linux."
-    Return
+    Exit
 }
 
 # Set OS variables if on unsupported version

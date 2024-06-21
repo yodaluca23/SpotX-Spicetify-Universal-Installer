@@ -44,7 +44,12 @@ function Run-WindowsScripts {
 
 # Function to run macOS/Linux scripts
 function Run-UnixScripts {
-    Write-Output "Running on macOS/Linux"
+    if ($IsMacOS) {
+        Write-Output "Running on MacOS"
+    }
+    if ($IsLinux) {
+        Write-Output "Running on Linux"
+    }
 
     if ($clean) {
         Write-Output "Uninstalling Spotify..."
@@ -92,32 +97,37 @@ function Cleanup {
     }
 }
 
-# Main script execution
-if ($PSVersionTable.PSVersion.Major -ge 7) {
-    if ($IsWindows) {
-        Run-WindowsScripts
-    } elseif ($IsMacOS -or $IsLinux) {
-        Run-UnixScripts
-    } else {
-        Write-Output "Unsupported OS"
-    }
-} else {
-    [bool] $IsMacOS = $IsLinux = $IsWindows = $false
-    $os = Read-Host 'What operating system is this? Windows (w), MacOS (m), or Linux (l)?'
+function UnsupportedOS {
+    Write-Output "Your running an Unsupported OS. The currently supported Operating systems for this script include Windows, MacOS, and Linux."
+    Return
+}
+
+if ($IsMacOS = $IsLinux = $IsWindows = $false)
+    $os = Read-Host 'What operating system is this? Windows (w), MacOS (m), Linux (l), or Other (o)?'
     if ($os -eq 'w' -or 'W') {
     [bool] $IsWindows = $true
-    Run-WindowsScripts
     }
     if ($os -eq 'm' -or 'M') {
     [bool] $IsMacOS = $true
-    Run-UnixScripts
     }
     if ($os -eq 'l' -or 'L') {
     [bool] $IsLinux = $true
-    Run-UnixScripts
+    }
+    if ($os -eq 'o' -or 'O') {
+    UnsupportedOS
     }
     Write-Output "Tip: Install PowerShell 7 or newer to skip this prompt next time."
+    }
 }
 
+# Main script execution
+if ($IsWindows) {
+    Run-WindowsScripts
+} elseif ($IsMacOS -or $IsLinux) {
+    Run-UnixScripts
+} else {
+    UnsupportedOS
+}
 # Clean up temporary files
 Cleanup
+Return

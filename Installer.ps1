@@ -102,7 +102,7 @@ function UnsupportedOS {
     Return
 }
 
-if ($IsMacOS = $IsLinux = $IsWindows = $false)
+if ($IsMacOS -eq $false -and $IsLinux -eq $false -and $IsWindows -eq $false) {
     $os = Read-Host 'What operating system is this? Windows (w), MacOS (m), Linux (l), or Other (o)?'
     if ($os -eq 'w' -or 'W') {
     [bool] $IsWindows = $true
@@ -117,7 +117,6 @@ if ($IsMacOS = $IsLinux = $IsWindows = $false)
     UnsupportedOS
     }
     Write-Output "Tip: Install PowerShell 7 or newer to skip this prompt next time."
-    }
 }
 
 # Main script execution

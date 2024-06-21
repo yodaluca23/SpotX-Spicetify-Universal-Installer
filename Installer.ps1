@@ -107,10 +107,6 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
     [bool] $IsMacOS = $IsLinux = $IsWindows = $false
 }
 
-"IsWindows: $IsWindows"
-"IsMacOS: $IsMacOS"
-"IsLinux: $IsLinux"
-
 # Ask user for OS if cannot detect
 if ($IsMacOS -eq $false -and $IsLinux -eq $false -and $IsWindows -eq $false) {
     $os = Read-Host 'What operating system is this? Windows (w), MacOS (m), Linux (l), or Other (o)?'

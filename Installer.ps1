@@ -110,16 +110,16 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 # Ask user for OS if cannot detect
 if ($IsMacOS -eq $false -and $IsLinux -eq $false -and $IsWindows -eq $false) {
     $os = Read-Host 'What operating system is this? Windows (w), MacOS (m), Linux (l), or Other (o)?'
-    if ($os -eq 'w' -or 'W') {
-    [bool] $IsWindows = $true
+    if ($os -eq 'w' -or $os -eq 'W') {
+        [bool] $IsWindows = $true
     }
-    if ($os -eq 'm' -or 'M') {
-    [bool] $IsMacOS = $true
+    if ($os -eq 'm' -or $os -eq 'M') {
+        [bool] $IsMacOS = $true
     }
-    if ($os -eq 'l' -or 'L') {
-    [bool] $IsLinux = $true
+    if ($os -eq 'l' -or $os -eq 'L') {
+        [bool] $IsLinux = $true
     }
-    if ($os -eq 'o' -or 'O') {
+    if ($os -eq 'o' -or $os -eq 'O') {
         UnsupportedOS
     }
     Write-Output "Tip: Install PowerShell 7 or newer to skip this prompt next time."

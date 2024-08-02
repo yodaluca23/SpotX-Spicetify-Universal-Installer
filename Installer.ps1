@@ -37,14 +37,29 @@ function Run-WindowsScripts {
     Start-Sleep -Seconds 30
     Stop-Process -Name "Spotify" -Force -ErrorAction SilentlyContinue
 
-    # Run the Spicetify-Win installation script
-    $psScriptUrl = "https://raw.githubusercontent.com/spicetify/cli/main/install.ps1"
-    Invoke-Expression (Invoke-WebRequest -Uri $psScriptUrl -UseBasicParsing).Content
+    # Run the spicetify update command and capture the output
+    $spiceifyUpdate = & spicetify update 2>&1
+    
+    # Check if need to install
+    if ($spiceifyUpdate -match "success") {
+        Write-Output "Spicetify already installed, reapplying."
+        spicetify backup apply
+    } else {
+        Write-Output "Spicetify not installed, or install is broken, installing."
+        # Run the Spicetify-Win installation script
+        $psScriptUrl = "https://raw.githubusercontent.com/spicetify/cli/main/install.ps1"
+        Invoke-Expression (Invoke-WebRequest -Uri $psScriptUrl -UseBasicParsing).Content
+    }
 }
 
 # Function to run macOS/Linux scripts
 function Run-UnixScripts {
-    Write-Output "Running on macOS/Linux"
+    if ($IsMacOS) {
+        Write-Output "Running on MacOS"
+    }
+    if ($IsLinux) {
+        Write-Output "Running on Linux"
+    }
 
     if ($clean) {
         Write-Output "Uninstalling Spotify..."
@@ -66,9 +81,19 @@ function Run-UnixScripts {
     Start-Sleep -Seconds 30
     pkill -f "Spotify"
 
-    # Run the Spicetify-Bash installation script
-    $spicetifyScript = "curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh"
-    bash -c "$spicetifyScript"
+    # Run the spicetify update command and capture the output
+    $spiceifyUpdate = & spicetify update 2>&1
+    
+    # Check if need to install
+    if ($spiceifyUpdate -match "success") {
+        Write-Output "Spicetify already installed, reapplying."
+        spicetify backup apply
+    } else {
+        Write-Output "Spicetify not installed, or install is broken, installing."
+        $spicetifyScript = "curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh"
+        bash -c "$spicetifyScript"
+    }
+
 }
 
 # Function to clean up temporary files
@@ -92,32 +117,42 @@ function Cleanup {
     }
 }
 
-# Main script execution
-if ($PSVersionTable.PSVersion.Major -ge 7) {
-    if ($IsWindows) {
-        Run-WindowsScripts
-    } elseif ($IsMacOS -or $IsLinux) {
-        Run-UnixScripts
-    } else {
-        Write-Output "Unsupported OS"
-    }
-} else {
+function UnsupportedOS {
+    Write-Output "Your running an Unsupported OS. The currently supported Operating systems for this script include Windows, MacOS, and Linux."
+    Exit 1
+}
+
+# Set OS variables if on unsupported version
+if ($PSVersionTable.PSVersion.Major -lt 7) {
     [bool] $IsMacOS = $IsLinux = $IsWindows = $false
-    $os = Read-Host 'What operating system is this? Windows (w), MacOS (m), or Linux (l)?'
-    if ($os -eq 'w' -or 'W') {
-    [bool] $IsWindows = $true
-    Run-WindowsScripts
+}
+
+# Ask user for OS if cannot detect
+if ($IsMacOS -eq $false -and $IsLinux -eq $false -and $IsWindows -eq $false) {
+    $os = Read-Host 'What operating system is this? Windows (w), MacOS (m), Linux (l), or Other (o)?'
+    if ($os -eq 'w' -or $os -eq 'W') {
+        [bool] $IsWindows = $true
     }
-    if ($os -eq 'm' -or 'M') {
-    [bool] $IsMacOS = $true
-    Run-UnixScripts
+    if ($os -eq 'm' -or $os -eq 'M') {
+        [bool] $IsMacOS = $true
     }
-    if ($os -eq 'l' -or 'L') {
-    [bool] $IsLinux = $true
-    Run-UnixScripts
+    if ($os -eq 'l' -or $os -eq 'L') {
+        [bool] $IsLinux = $true
+    }
+    if ($os -eq 'o' -or $os -eq 'O') {
+        UnsupportedOS
     }
     Write-Output "Tip: Install PowerShell 7 or newer to skip this prompt next time."
 }
 
+# Main script execution
+if ($IsWindows) {
+    Run-WindowsScripts
+} elseif ($IsMacOS -or $IsLinux) {
+    Run-UnixScripts
+} else {
+    UnsupportedOS
+}
 # Clean up temporary files
 Cleanup
+Return

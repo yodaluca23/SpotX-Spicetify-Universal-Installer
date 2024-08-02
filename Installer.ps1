@@ -28,7 +28,7 @@ function Run-WindowsScripts {
     Invoke-WebRequest -Uri $batchScriptUrl -OutFile $batchScriptPath
     Start-Process -FilePath "cmd.exe" -ArgumentList "/c $batchScriptPath" -Wait
 
-    # Open Spotify
+    # Open Spotify, thank you to SpotX Installation script for following code to locate executable.
     $spotifyDirectory = Join-Path $env:APPDATA 'Spotify'
     $spotifyDirectory2 = Join-Path $env:LOCALAPPDATA 'Spotify'
     $spotifyExecutable = Join-Path $spotifyDirectory 'Spotify.exe'

@@ -37,9 +37,19 @@ function Run-WindowsScripts {
     Start-Sleep -Seconds 30
     Stop-Process -Name "Spotify" -Force -ErrorAction SilentlyContinue
 
-    # Run the Spicetify-Win installation script
-    $psScriptUrl = "https://raw.githubusercontent.com/spicetify/cli/main/install.ps1"
-    Invoke-Expression (Invoke-WebRequest -Uri $psScriptUrl -UseBasicParsing).Content
+    # Run the spicetify update command and capture the output
+    $spiceifyUpdate = & spicetify update 2>&1
+    
+    # Check if need to install
+    if ($spiceifyUpdate -match "success") {
+        Write-Output "Spicetify already installed, reapplying."
+        spicetify backup apply
+    } else {
+        Write-Output "Spicetify not installed, or install is broken, installing."
+        # Run the Spicetify-Win installation script
+        $psScriptUrl = "https://raw.githubusercontent.com/spicetify/cli/main/install.ps1"
+        Invoke-Expression (Invoke-WebRequest -Uri $psScriptUrl -UseBasicParsing).Content
+    }
 }
 
 # Function to run macOS/Linux scripts
@@ -76,8 +86,10 @@ function Run-UnixScripts {
     
     # Check if need to install
     if ($spiceifyUpdate -match "success") {
+        Write-Output "Spicetify already installed, reapplying."
         spicetify backup apply
     } else {
+        Write-Output "Spicetify not installed, or install is broken, installing."
         $spicetifyScript = "curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh"
         bash -c "$spicetifyScript"
     }

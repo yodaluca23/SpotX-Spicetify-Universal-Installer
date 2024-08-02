@@ -71,9 +71,17 @@ function Run-UnixScripts {
     Start-Sleep -Seconds 30
     pkill -f "Spotify"
 
-    # Run the Spicetify-Bash installation script
-    $spicetifyScript = "curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh"
-    bash -c "$spicetifyScript"
+    # Run the spicetify update command and capture the output
+    $spiceifyUpdate = & spicetify update 2>&1
+    
+    # Check if need to install
+    if ($spiceifyUpdate -match "success") {
+        spicetify backup apply
+    } else {
+        $spicetifyScript = "curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh"
+        bash -c "$spicetifyScript"
+    }
+
 }
 
 # Function to clean up temporary files

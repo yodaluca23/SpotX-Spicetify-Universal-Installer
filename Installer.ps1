@@ -39,16 +39,21 @@ function Run-WindowsScripts {
 
     # Run the spicetify update command and capture the output
     $spiceifyUpdate = & spicetify update 2>&1
-    
-    # Check if need to install
-    if ($spiceifyUpdate -match "success") {
-        Write-Output "Spicetify already installed, reapplying."
-        spicetify backup apply
-    } else {
-        Write-Output "Spicetify not installed, or install is broken, installing."
-        # Run the Spicetify-Win installation script
+
+    if ($clean) {
         $psScriptUrl = "https://raw.githubusercontent.com/spicetify/cli/main/install.ps1"
         Invoke-Expression (Invoke-WebRequest -Uri $psScriptUrl -UseBasicParsing).Content
+    } else {
+        # Check if need to install
+        if ($spiceifyUpdate -match "success") {
+            Write-Output "Spicetify already installed, reapplying."
+            spicetify backup apply
+        } else {
+            Write-Output "Spicetify not installed, or install is broken, installing."
+            # Run the Spicetify-Win installation script
+            $psScriptUrl = "https://raw.githubusercontent.com/spicetify/cli/main/install.ps1"
+            Invoke-Expression (Invoke-WebRequest -Uri $psScriptUrl -UseBasicParsing).Content
+        }
     }
 }
 
@@ -85,15 +90,19 @@ function Run-UnixScripts {
     $spiceifyUpdate = & spicetify update 2>&1
     
     # Check if need to install
-    if ($spiceifyUpdate -match "success") {
-        Write-Output "Spicetify already installed, reapplying."
-        spicetify backup apply
-    } else {
-        Write-Output "Spicetify not installed, or install is broken, installing."
+    if ($clean) {
         $spicetifyScript = "curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh"
         bash -c "$spicetifyScript"
+    } else {
+        if ($spiceifyUpdate -match "success") {
+            Write-Output "Spicetify already installed, reapplying."
+            spicetify backup apply
+        } else {
+            Write-Output "Spicetify not installed, or install is broken, installing."
+            $spicetifyScript = "curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh"
+            bash -c "$spicetifyScript"
+        }
     }
-
 }
 
 # Function to clean up temporary files

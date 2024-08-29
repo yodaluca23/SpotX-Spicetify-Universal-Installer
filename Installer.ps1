@@ -47,7 +47,11 @@ function Run-WindowsScripts {
         # Check if need to install
         if ($spiceifyUpdate -match "success") {
             Write-Output "Spicetify already installed, reapplying."
-            spicetify backup apply
+            $spiceifyBackUp = & spicetify backup apply 2>&1
+            if ($spiceifyBackUp -match "spicetify restore backup"){
+                spicetify restore backup
+                spicetify backup apply
+            }
         } else {
             Write-Output "Spicetify not installed, or install is broken, installing."
             # Run the Spicetify-Win installation script
@@ -96,7 +100,11 @@ function Run-UnixScripts {
     } else {
         if ($spiceifyUpdate -match "success") {
             Write-Output "Spicetify already installed, reapplying."
-            spicetify backup apply
+            $spiceifyBackUp = & spicetify backup apply 2>&1
+            if ($spiceifyBackUp -match "spicetify restore backup"){
+                spicetify restore backup
+                spicetify backup apply
+            }
         } else {
             Write-Output "Spicetify not installed, or install is broken, installing."
             $spicetifyScript = "curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh"

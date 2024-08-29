@@ -38,17 +38,18 @@ function Run-WindowsScripts {
     Stop-Process -Name "Spotify" -Force -ErrorAction SilentlyContinue
 
     # Run the spicetify update command and capture the output
-    $spiceifyUpdate = & spicetify update 2>&1
+    $spicetifyUpdate = & spicetify update 2>&1
 
     if ($clean) {
         $psScriptUrl = "https://raw.githubusercontent.com/spicetify/cli/main/install.ps1"
         Invoke-Expression (Invoke-WebRequest -Uri $psScriptUrl -UseBasicParsing).Content
     } else {
         # Check if need to install
-        if ($spiceifyUpdate -match "success") {
+        if ($spicetifyUpdate -match "success") {
             Write-Output "Spicetify already installed, reapplying."
-            $spiceifyBackUp = & spicetify backup apply 2>&1
-            if ($spiceifyBackUp -match "spicetify restore backup"){
+            $spicetifyBackUp = & spicetify backup apply 2>&1
+            if ($spicetifyBackUp -match "spicetify restore backup"){
+                Write-Output "Restoring Backup"
                 spicetify restore backup
                 spicetify backup apply
             }
@@ -91,17 +92,18 @@ function Run-UnixScripts {
     pkill -f "Spotify"
 
     # Run the spicetify update command and capture the output
-    $spiceifyUpdate = & spicetify update 2>&1
+    $spicetifyUpdate = & spicetify update 2>&1
     
     # Check if need to install
     if ($clean) {
         $spicetifyScript = "curl -fsSL https://raw.githubusercontent.com/spicetify/cli/main/install.sh | sh"
         bash -c "$spicetifyScript"
     } else {
-        if ($spiceifyUpdate -match "success") {
+        if ($spicetifyUpdate -match "success") {
             Write-Output "Spicetify already installed, reapplying."
-            $spiceifyBackUp = & spicetify backup apply 2>&1
-            if ($spiceifyBackUp -match "spicetify restore backup"){
+            $spicetifyBackUp = & spicetify backup apply 2>&1
+            if ($spicetifyBackUp -match "spicetify restore backup"){
+                Write-Output "Restoring Backup"
                 spicetify restore backup
                 spicetify backup apply
             }

@@ -56,7 +56,7 @@ This script combines the work of various authors to provide an all-in-one soluti
 - **SpotX Installation (Windows)**: [SpotX-Official](https://github.com/SpotX-Official)
 - **Spicetify Installation (Windows)**: [spicetify](https://github.com/spicetify)
 - **Uninstall Spotify (macOS/Linux)**: [jetfir3](https://gist.github.com/jetfir3)
-- **SpotX Installation (macOS/Linux)**: [SpotX-Official](https://spotx-official.github.io)
+- **SpotX Installation (macOS/Linux)**: [SpotX-Official](https://github.com/SpotX-Official/SpotX-Bash)
 - **Spicetify Installation (macOS/Linux)**: [spicetify](https://github.com/spicetify)
 
 This script simply combines their work into a unified installation process. All credit goes to the original authors.

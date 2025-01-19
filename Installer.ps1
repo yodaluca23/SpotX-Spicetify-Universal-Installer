@@ -12,28 +12,29 @@ param (
 
 # Function to run Windows scripts
 function Run-WindowsScripts {
-    Write-Output "Running on Windows"
+    Write-Output "Running on Windows`n`n----------------------------------------------------------------------"
 
     if ($clean) {
-        Write-Output "Uninstalling Spotify..."
+        Write-Output "`nUninstalling Spotify..."
         $uninstallScriptUrl = "https://raw.githubusercontent.com/amd64fox/Uninstall-Spotify/main/Uninstall-Spotify.bat"
         $uninstallScriptPath = "$env:TEMP\Uninstall-Spotify.bat"
         Invoke-WebRequest -Uri $uninstallScriptUrl -OutFile $uninstallScriptPath
-        Start-Process -FilePath "cmd.exe" -ArgumentList "/c $uninstallScriptPath" -Wait
+        & "C:\Windows\System32\cmd.exe" /c $uninstallScriptPath -Wait
+        Write-Output "`n----------------------------------------------------------------------"
     }
 
     # Download and run the SpotX-Win batch script
     $batchScriptUrl = "https://raw.githubusercontent.com/SpotX-Official/SpotX/main/Install_New_theme.bat"
     $batchScriptPath = "$env:TEMP\Install_New_theme.bat"
     Invoke-WebRequest -Uri $batchScriptUrl -OutFile $batchScriptPath
-    Start-Process -FilePath "cmd.exe" -ArgumentList "/c $batchScriptPath" -Wait
+    & "C:\Windows\System32\cmd.exe" /c $batchScriptPath
 
     # Open Spotify, thank you to SpotX Installation script for following code to locate executable.
     $spotifyDirectory = Join-Path $env:APPDATA 'Spotify'
     $spotifyDirectory2 = Join-Path $env:LOCALAPPDATA 'Spotify'
     $spotifyExecutable = Join-Path $spotifyDirectory 'Spotify.exe'
     Start-Process -FilePath $spotifyExecutable
-    Write-Output "Openning the Spotify Application for 30 seconds to avoid conflicts with the Spicetify installation. If it does not open automatically please open it manually."
+    Write-Output "`n----------------------------------------------------------------------`n`nOpenning the Spotify Application for 30 seconds to avoid conflicts with the Spicetify installation. If it does not open automatically please open it manually."
     Start-Sleep -Seconds 30
     Stop-Process -Name "Spotify" -Force -ErrorAction SilentlyContinue
 
@@ -60,21 +61,23 @@ function Run-WindowsScripts {
             Invoke-Expression (Invoke-WebRequest -Uri $psScriptUrl -UseBasicParsing).Content
         }
     }
+    Write-Output "`n----------------------------------------------------------------------`n"
 }
 
 # Function to run macOS/Linux scripts
 function Run-UnixScripts {
     if ($IsMacOS) {
-        Write-Output "Running on MacOS"
+        Write-Output "Running on MacOS`n`n----------------------------------------------------------------------"
     }
     if ($IsLinux) {
-        Write-Output "Running on Linux"
+        Write-Output "Running on Linux`n`n----------------------------------------------------------------------"
     }
 
     if ($clean) {
-        Write-Output "Uninstalling Spotify..."
+        Write-Output "`nUninstalling Spotify...`n"
         $uninstallScript = "bash <(curl -sSL https://gist.github.com/jetfir3/f620e44fc246c1bed45ed040bbfa2d68/raw/uninstallify.sh)"
         bash -c "$uninstallScript"
+        Write-Output "`n----------------------------------------------------------------------"
     }
 
     # Run the SpotX-Bash installation script
@@ -86,8 +89,8 @@ function Run-UnixScripts {
     bash -c "$spotxScript"
 
     # Open Spotify
-    Start-Process -FilePath "open" -ArgumentList "spotify://open"
-    Write-Output "Openning the Spotify Application for 30 seconds to avoid conflicts with the Spicetify installation. If it does not open automatically please open it manually."
+    open "/Applications/Spotify.app"
+    Write-Output "----------------------------------------------------------------------`n`nOpenning the Spotify Application for 30 seconds to avoid conflicts with the Spicetify installation. If it does not open automatically please open it manually."
     Start-Sleep -Seconds 30
     pkill -f "Spotify"
 
@@ -113,6 +116,7 @@ function Run-UnixScripts {
             bash -c "$spicetifyScript"
         }
     }
+    Write-Output "`n----------------------------------------------------------------------`n"
 }
 
 # Function to clean up temporary files
